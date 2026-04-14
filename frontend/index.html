@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="c2p2 graph reasoning — structural alignment between candidate skills and job requirements" />
+    <title>c2p2 Graph Reasoning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="frontend/css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <h1 class="brand-title">c2p2 Graph Reasoning</h1>
+            <p class="brand-sub">Structural alignment over knowledge graphs</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span class="connection-pill" id="connectionStatus" role="status" aria-live="polite">
+            <span class="dot" id="connectionDot"></span>
+            <span id="connectionLabel">Checking API…</span>
+          </span>
+        </div>
+      </header>
+
+      <main id="main" class="main">
+        <section class="panel intro" aria-labelledby="intro-heading">
+          <h2 id="intro-heading" class="sr-only">How it works</h2>
+          <p class="intro-text">
+            Build two directed graphs (candidate → skills, job → required skills), then measure how many required paths exist in the candidate graph.
+            Results include an explainability summary for hiring workflows.
+          </p>
+        </section>
+
+        <div class="layout">
+          <section class="panel form-panel" aria-labelledby="form-heading">
+            <h2 id="form-heading" class="panel-title">Inputs</h2>
+            <form id="analysisForm" class="form" novalidate>
+              <div class="form-grid">
+                <div class="field-group">
+                  <label for="candidateName">Candidate name</label>
+                  <input type="text" id="candidateName" name="candidate_name" autocomplete="name" placeholder="e.g. Alex Rivera" required />
+                </div>
+                <div class="field-group">
+                  <label for="jobTitle">Job title</label>
+                  <input type="text" id="jobTitle" name="job_title" autocomplete="organization-title" placeholder="e.g. Senior ML Engineer" required />
+                </div>
+              </div>
+
+              <div class="skills-block file-upload-block">
+                <div class="skills-header">
+                  <label for="resumeFile">Candidate Resume (PDF)</label>
+                  <span class="hint">Skills will be extracted automatically</span>
+                </div>
+                <div class="file-drop-area" id="fileDropArea">
+                  <span class="file-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                  </span>
+                  <span class="file-msg" id="fileMsg">Drag and drop PDF here or click to browse</span>
+                  <input type="file" id="resumeFile" name="resume_file" accept=".pdf,application/pdf" class="file-input" required aria-label="Upload Resume PDF" />
+                </div>
+              </div>
+
+              <div class="skills-block">
+                <div class="skills-header">
+                  <label for="jobSkillInput">Job required skills</label>
+                  <span class="hint">Press Enter or comma to add</span>
+                </div>
+                <div class="skill-input-row">
+                  <input type="text" id="jobSkillInput" class="skill-input" placeholder="Add a requirement…" autocomplete="off" />
+                  <button type="button" class="btn btn-secondary" id="addJobSkill">Add</button>
+                </div>
+                <ul class="chips" id="jobChips" aria-label="Job skills list"></ul>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                  <span class="btn-label">Run graph analysis</span>
+                  <span class="btn-spinner" id="submitSpinner" hidden aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-ghost" id="resetBtn">Clear all</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel results-panel" aria-labelledby="results-heading" aria-live="polite">
+            <h2 id="results-heading" class="panel-title">Results</h2>
+            <div id="resultsEmpty" class="results-empty">
+              <p>Submit the form to see alignment score, matched paths, gaps, and the XAI decision.</p>
+            </div>
+            <div id="resultsContent" class="results-content" hidden>
+              <!-- Candidate Profile View -->
+              <div class="candidate-profile" id="candidateProfile">
+                <div class="profile-header">
+                  <div class="profile-avatar" id="profileInitials">C</div>
+                  <div>
+                    <h3 class="profile-name" id="profileName">Candidate Name</h3>
+                    <div class="profile-contact">
+                      <span class="profile-contact-item" id="profileEmailWrap">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span id="profileEmail">email@example.com</span>
+                      </span>
+                      <span class="profile-contact-item" id="profilePhoneWrap">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <span id="profilePhone">Phone</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="profile-details">
+                  <div class="detail-group">
+                    <span class="detail-label">Extracted Education</span>
+                    <ul class="detail-value edu-list" id="profileEduList"></ul>
+                  </div>
+                  <div class="detail-group">
+                    <span class="detail-label">Applying For</span>
+                    <span class="detail-value" id="profileJobTarget">Job Target</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="score-row">
+                <div class="score-ring-wrap" aria-label="Structural alignment score">
+                  <svg class="score-ring" viewBox="0 0 120 120" role="img" aria-labelledby="scoreTitle">
+                    <title id="scoreTitle">Alignment score</title>
+                    <circle class="score-ring-bg" cx="60" cy="60" r="52" />
+                    <circle class="score-ring-fg" id="scoreRingFg" cx="60" cy="60" r="52" />
+                  </svg>
+                  <div class="score-value">
+                    <span class="score-number" id="scoreNumber">0</span>
+                    <span class="score-unit">%</span>
+                  </div>
+                </div>
+                <div class="decision-block">
+                  <span class="decision-label">XAI decision</span>
+                  <span class="decision-badge" id="decisionBadge">—</span>
+                  <p class="decision-expl" id="decisionExpl"></p>
+                </div>
+              </div>
+
+              <div class="split">
+                <div class="mini-panel matched">
+                  <h3 class="mini-title">Matched concepts</h3>
+                  <ul class="node-list" id="matchedList"></ul>
+                </div>
+                <div class="mini-panel missing">
+                  <h3 class="mini-title">Missing / gaps</h3>
+                  <ul class="node-list" id="missingList"></ul>
+                </div>
+              </div>
+
+              <div class="graph-wrap">
+                <div class="graph-header">
+                  <h3 class="mini-title">Graph View</h3>
+                  <span class="graph-caption">Candidate graph vs job requirements</span>
+                </div>
+                <div class="graph-toolbar">
+                  <div class="graph-legend" aria-label="Graph legend">
+                    <span class="legend-item"><span class="legend-swatch match"></span> matched</span>
+                    <span class="legend-item"><span class="legend-swatch missing"></span> missing</span>
+                    <span class="legend-item"><span class="legend-swatch neutral"></span> other</span>
+                  </div>
+                  <div class="graph-actions">
+                    <button type="button" class="btn btn-ghost btn-small" id="graphZoomIn">Zoom in</button>
+                    <button type="button" class="btn btn-ghost btn-small" id="graphZoomOut">Zoom out</button>
+                    <button type="button" class="btn btn-ghost btn-small" id="graphResetView">Reset view</button>
+                    <button type="button" class="btn btn-secondary btn-small" id="downloadSvg" disabled>Download SVG</button>
+                    <button type="button" class="btn btn-secondary btn-small" id="downloadPng" disabled>Download PNG</button>
+                  </div>
+                </div>
+                <div class="graph-canvas" id="graphCanvas"></div>
+              </div>
+
+              <div class="raw-json-wrap">
+                <button type="button" class="btn btn-ghost btn-small" id="toggleRaw" aria-expanded="false">
+                  Show raw JSON response
+                </button>
+                <pre class="raw-json" id="rawJson" hidden></pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>API: <code>POST /upload_and_analyze_graph</code> · <code>GET /health</code></p>
+      </footer>
+    </div>
+
+    <div id="toastRegion" class="toast-region" aria-live="assertive"></div>
+
+    <script type="module" src="frontend/js/api.js"></script>
+    <script type="module" src="frontend/js/app.js"></script>
+  </body>
+</html>
