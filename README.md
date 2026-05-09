@@ -1,105 +1,99 @@
-# C2P2 Graph Reasoning System
+# TalentGraph-AI  
+### Explainable Knowledge Graph-Based Recruitment Intelligence System
 
-An AI-powered resume-to-job matching platform that uses **Knowledge Graphs**, **Structural Alignment**, and **Explainable AI (XAI)** to evaluate candidate suitability against job requirements.
+TalentGraph-AI is an advanced AI-powered recruitment intelligence system that combines **Natural Language Processing (NLP)**, **Knowledge Graph Reasoning**, and **Explainable AI (XAI)** to intelligently analyze resumes and job descriptions.
 
----
-
-## Overview
-
-Traditional resume screening often relies on keyword matching, which can miss context and structural relationships between skills and job requirements.
-
-The **C2P2 Graph Reasoning System** addresses this by:
-
-* Extracting candidate skills from uploaded resumes (PDF)
-* Building directed knowledge graphs for candidates and jobs
-* Comparing graph structures using reasoning algorithms
-* Generating alignment scores
-* Producing transparent hiring decisions with XAI explanations
-* Visualizing matched and missing concepts in an interactive UI
+Unlike traditional Applicant Tracking Systems (ATS) that rely heavily on keyword matching, TalentGraph-AI builds structured knowledge graphs from candidate profiles and job requirements to perform deeper reasoning, transparent evaluation, and intelligent candidate-job alignment.
 
 ---
 
-## Core Features
+# 🚀 Key Features
 
-### Resume Parsing
+## ✅ Resume Parsing
+- Extracts text from PDF resumes
+- Supports structured resume analysis
+- Handles skill and experience extraction
 
-* Upload candidate resumes in PDF format
-* Extract readable text content
-* Detect contact information (email, phone)
-* Identify education mentions
+## ✅ NLP-Based Skill Extraction
+- Uses spaCy NLP pipeline
+- Identifies technical skills and keywords
+- Processes semantic entities from resumes and job descriptions
 
-### Skill Extraction
+## ✅ Knowledge Graph Construction
+- Converts extracted information into graph structures
+- Represents skills, technologies, and relationships as nodes and edges
+- Enables structural reasoning instead of plain keyword comparison
 
-* NLP-based extraction using spaCy
-* Base technical skill lexicon
-* Dynamic support for custom job-required skills
+## ✅ Graph-Based Candidate Matching
+- Performs intelligent graph alignment between:
+  - Candidate profile graph
+  - Job requirement graph
+- Computes similarity and compatibility scores
 
-### Knowledge Graph Engine
+## ✅ Explainable AI (XAI)
+- Provides transparent reasoning for decisions
+- Displays:
+  - Matched skills
+  - Missing skills
+  - Compatibility insights
+  - Recruitment explanations
 
-* Candidate → Skills graph
-* Job → Required Skills graph
-* Directed graph architecture using NetworkX
-
-### Graph Reasoning
-
-* Traverses graph nodes
-* Finds matched required concepts
-* Detects missing requirements
-* Calculates structural alignment score
-
-### Explainable AI (XAI)
-
-Decision categories:
-
-* `AUTO_ACCEPT`
-* `REVIEW_REQUIRED`
-* `BLOCK_AUTOMATION`
-
-Each decision includes human-readable reasoning.
-
-### Interactive Frontend
-
-* Modern dark UI
-* Drag & drop PDF upload
-* Skill chip input system
-* Visual score ring
-* Graph visualization
-* Export graph as SVG / PNG
+## ✅ Interactive Visualization
+- Dynamic frontend interface
+- Graph visualization support
+- Modern dark-themed UI
+- Real-time API interaction
 
 ---
 
-## Tech Stack
-
-### Backend
-
-* Python
-* FastAPI
-* NetworkX
-* spaCy
-* PyMuPDF
-
-### Frontend
-
-* HTML5
-* CSS3
-* JavaScript (Vanilla JS)
-
-### AI / Logic
-
-* NLP Skill Extraction
-* Knowledge Graph Reasoning
-* Explainable AI
-
----
-
-## Project Structure
+# 🧠 System Architecture
 
 ```text
-c2p2_graph_reasoning/
-│── main.py
-│── config.py
-│── requirements.txt
-│── generate_patent_diagram.py
+PDF Resume
+    ↓
+Text Extraction
+    ↓
+NLP Skill Extraction
+    ↓
+Knowledge Graph Builder
+    ↓
+Graph Reasoning Engine
+    ↓
+Similarity & Alignment Scoring
+    ↓
+Explainable AI Layer
+    ↓
+Frontend Visualization
+```
+
+---
+
+# 🛠️ Tech Stack
+
+## Backend
+- Python
+- FastAPI
+- NetworkX
+- spaCy
+- PyMuPDF
+
+## Frontend
+- HTML
+- CSS
+- JavaScript
+
+## AI / NLP
+- Knowledge Graphs
+- NLP Skill Extraction
+- Explainable AI (XAI)
+- Graph-Based Reasoning
+
+---
+
+# 📂 Project Structure
+
+```bash
+TalentGraph-AI/
 │
 ├── agents/
 │   ├── graph_builder.py
@@ -111,61 +105,71 @@ c2p2_graph_reasoning/
 │   ├── spacy_extractor.py
 │   └── model_cache.py
 │
-└── frontend/
-    ├── index.html
-    ├── css/styles.css
-    └── js/
-        ├── api.js
-        └── app.js
+├── frontend/
+│   ├── index.html
+│   ├── css/
+│   └── js/
+│
+├── main.py
+├── config.py
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Installation
+# ⚙️ Installation
 
-### Clone Repository
+## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/Aditya-135/c2p2_graph_reasoning.git
-cd c2p2_graph_reasoning
+git clone https://github.com/Aditya-135/TalentGraph-AI.git
+cd TalentGraph-AI
 ```
 
-### Create Virtual Environment
+---
 
+## 2️⃣ Create Virtual Environment
+
+### Windows
 ```bash
 python -m venv venv
+venv\\Scripts\\activate
 ```
 
-### Activate Virtual Environment
-
-#### Windows
-
+### Linux / macOS
 ```bash
-venv\Scripts\activate
-```
-
-#### Linux / Mac
-
-```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-### Install Dependencies
+---
+
+## 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+---
+
+## 4️⃣ Download spaCy Model
+
+```bash
 python -m spacy download en_core_web_sm
 ```
 
 ---
 
-## Run the Project
+# ▶️ Running the Project
+
+## Start FastAPI Backend
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Open in browser:
+Backend will run at:
 
 ```text
 http://127.0.0.1:8000
@@ -173,80 +177,95 @@ http://127.0.0.1:8000
 
 ---
 
-## Workflow
+## Open Frontend
 
-1. Enter candidate name
-2. Enter job title
-3. Upload resume PDF
-4. Add required job skills
-5. Run graph analysis
-6. View:
+Open:
 
-   * Alignment score
-   * Matched skills
-   * Missing skills
-   * XAI decision
-   * Graph visualization
+```text
+frontend/index.html
+```
+
+in your browser.
 
 ---
 
-## Example Decisions
+# 📊 Example Workflow
 
-| Score Range | Decision         |
-| ----------- | ---------------- |
-| 75%+        | AUTO_ACCEPT      |
-| 40% - 74%   | REVIEW_REQUIRED  |
-| Below 40%   | BLOCK_AUTOMATION |
-
----
-
-## Use Cases
-
-* Smart ATS systems
-* HR automation
-* Resume screening
-* Recruitment analytics
-* Candidate ranking
-* Transparent AI hiring systems
+1. Upload resume PDF
+2. Enter job description
+3. Extract skills using NLP
+4. Build knowledge graphs
+5. Perform graph reasoning
+6. Generate compatibility score
+7. Display explainable hiring insights
 
 ---
 
-## Future Enhancements
+# 🔍 Explainable AI Output
 
-* Semantic similarity matching
-* Multi-resume ranking
-* Recruiter dashboard
-* Authentication system
-* Cloud deployment
-* Real-time analytics
-* LLM-assisted reasoning layer
+TalentGraph-AI provides transparent recruitment insights such as:
 
----
-
-## Research Value
-
-This project demonstrates practical application of:
-
-* Artificial Intelligence
-* Graph Theory
-* NLP
-* Explainable AI
-* Decision Systems
-* Human-Centered AI
+- Matching Skills
+- Missing Skills
+- Candidate Strengths
+- Compatibility Score
+- Graph Alignment Insights
+- Recommendation Reasoning
 
 ---
 
-## Author
+# 🎯 Research Contribution
 
-**Aditya Patil**
+TalentGraph-AI explores the integration of:
 
+- Explainable AI (XAI)
+- Knowledge Graphs
+- NLP-Based Recruitment Intelligence
+- Graph Reasoning Systems
+- Transparent AI Decision-Making
 
-**Saloni Bhimellu**
-
-B.Tech CSE (AI & ML)
+This project aims to improve fairness, interpretability, and intelligence in modern recruitment systems.
 
 ---
 
-## License
+# 📈 Future Enhancements
 
-This project is for academic, research, and innovation purposes.
+- Semantic similarity using Sentence Transformers
+- Graph Neural Networks (GNNs)
+- Neo4j Graph Database Integration
+- Multi-candidate ranking system
+- Recruiter analytics dashboard
+- Adaptive learning-based scoring
+- Bias detection and fairness evaluation
+- Cloud deployment support
+
+---
+
+# 📚 Research Domains
+
+- Artificial Intelligence
+- Explainable AI (XAI)
+- Natural Language Processing (NLP)
+- Knowledge Graphs
+- Intelligent Recruitment Systems
+- Decision Intelligence
+
+---
+
+# 👨‍💻 Author
+
+**Aditya**
+
+AI/ML Research & Intelligent Systems Development
+
+---
+
+# 📄 License
+
+This project is intended for academic, research, and educational purposes.
+
+---
+
+# ⭐ TalentGraph-AI
+
+### Intelligent • Explainable • Graph-Based Recruitment Intelligence
